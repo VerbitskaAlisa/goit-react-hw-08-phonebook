@@ -1,7 +1,7 @@
-import { setFilter } from 'redux/filterSlice';
+import { setFilter } from 'redux/contacts/filterSlice';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectFilter } from 'redux/selectors';
-import { Label, Input } from './Filter.styled';
+import { selectFilter } from 'redux/contacts/selectors';
+import { Text, Input } from '@chakra-ui/react';
 
 const Filter = () => {
     const filter = useSelector(selectFilter);
@@ -11,10 +11,10 @@ const Filter = () => {
         dispatch(setFilter(e.target.value));
     }
     return (
-        <Label>
-            Find contacts by name
-            <Input type="text" value={filter} onChange={changeFilter} />
-        </Label>
+        <>
+            <Text fontSize="2xl">Find contacts by name</Text>
+            <Input fontSize="2xl" size="lg" htmlSize={38} width='auto' variant='flushed' type="text" value={filter} onChange={changeFilter} mb="8" focusBorderColor='pink.400'/>
+        </>
     )
 }
 

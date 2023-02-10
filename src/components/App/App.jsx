@@ -1,38 +1,56 @@
-import Form from "../Form/Form";
-import ContactList from "../ContactsList/ContactList";
-import { Loader } from "components/Spinner/Spinner";
-import Filter from "../Filter/Filter";
-import { Container, MainTitle, Title, OpenModalBtn } from './App.styled';
-import ModalWindow from "components/Modal/Modal";
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { selectIsLoading, selectError } from "redux/selectors";
-import { fetchContacts } from "redux/contactsOperations";
+import SharedLayout from "components/SharedLayout/SharedLayout";
+import { Route, Routes } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useEffect, lazy } from "react";
+import { PrivateRoute } from '../PrivateRoute';
+import { RestrictedRoute } from "../RestrictedRoute";
+import { refreshUser } from "redux/auth/operations";
+import { useAuth } from "redux/hooks/useAuth";
+
+const HomePage = lazy(() => import('../../pages/Home/Home'));
+const RegisterPage = lazy(() => import('../../pages/Register/Register'));
+const LoginPage = lazy(() => import('../../pages/Login/Login'));
+const ContactsPage = lazy(() => import('../../pages/Contacts/Contacts'));
 
 function App () {
-  const isLoading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
-  const [showModal, setShowModal] = useState(false);  
-  const dispatch = useDispatch();                                        
+  const dispatch = useDispatch();
+  const { isRefreshing } = useAuth();
 
-   const toggleModal = () => {
-    setShowModal(!showModal)
-};
 
-useEffect(() => {
-  dispatch(fetchContacts());
-}, [dispatch]);
-
-  return <Container>
-             <MainTitle>Phonebook</MainTitle>
-             <OpenModalBtn onClick={toggleModal}>Add</OpenModalBtn>
-             <Title>Contacts</Title>
-             <Filter />
-             {isLoading && !error && <Loader />}
-             {error && <p>{error}</p>}
-             {!isLoading && !error && <ContactList />}
-             {showModal && <ModalWindow onClose={toggleModal}><Form showModal={toggleModal}/></ModalWindow>}
-             </Container>
+  useEffect(() => {
+    dispatch(refreshUser());
+  }, [dispatch]);
+  return isRefreshing ? (
+    <b>Refreshing user...</b>
+  ) : (
+    <Routes>
+      <Route path="/" element={<SharedLayout />}>
+         <Route index element={<HomePage />} />
+         <Route path="/home" element={<HomePage/>}/>
+             <Route
+                  path="/register"
+                  element={
+                    <RestrictedRoute
+                       redirectTo="/contacts"
+                       component={<RegisterPage />}
+                    />   
+                  }
+             />
+             <Route 
+                   path="/login"
+                   element={
+                    <RestrictedRoute
+                        redirectTo="/contacts"
+                        component={<LoginPage />}
+                   />     
+                   }  
+               />       
+             <Route 
+                  path="/contacts" 
+                  element={
+                       <PrivateRoute redirectTo="/login" component={<ContactsPage />}/>} />
+      </Route>
+    </Routes>)
 }
 
 export default App;
