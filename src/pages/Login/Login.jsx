@@ -3,7 +3,6 @@ import { Link as ReachLink } from "react-router-dom";
 import React from "react";
 import { logIn } from "redux/auth/operations";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 
 export default function Login () {
     const [show, setShow] = React.useState(false);

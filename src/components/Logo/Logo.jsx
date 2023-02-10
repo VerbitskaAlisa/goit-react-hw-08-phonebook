@@ -1,4 +1,4 @@
-import { Box, Link, Text } from "@chakra-ui/react";
+import { Link, Text } from "@chakra-ui/react";
 import { PhoneIcon } from '@chakra-ui/icons';
 import { NavLink } from 'react-router-dom';
 
