@@ -10,7 +10,6 @@ export default function Login () {
     const handleClick = () => setShow(!show);
     const { colorMode } = useColorMode();
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
       e.preventDefault();
